@@ -1,0 +1,56 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Мои задачи{% endblock %}
+
+{% block content %}
+    <div class="top-bar">
+        <h1 style="margin: 0;">📝 Мои задачи</h1>
+        <a href="{% url 'task_create' %}" class="btn btn-primary">+ Новая задача</a>
+    </div>
+
+    <form method="get" class="search-bar">
+        <input type="text" name="q" placeholder="Поиск по названию..." value="{{ query }}">
+        <select name="status">
+            <option value="all" {% if status == 'all' %}selected{% endif %}>Все</option>
+            <option value="completed" {% if status == 'completed' %}selected{% endif %}>Выполненные</option>
+            <option value="active" {% if status == 'active' %}selected{% endif %}>Невыполненные</option>
+        </select>
+        <button type="submit" class="btn btn-light">Найти</button>
+    </form>
+
+    {% for task in tasks %}
+        <div class="card">
+            <div class="task-header">
+                <span class="task-title {% if task.completed %}done{% endif %}">{{ task.title }}</span>
+                {% if task.completed %}
+                    <span class="badge badge-done">Выполнена</span>
+                {% else %}
+                    <span class="badge badge-pending">В работе</span>
+                {% endif %}
+            </div>
+
+            {% if task.description %}
+                <div class="task-desc">{{ task.description }}</div>
+            {% endif %}
+
+            <div class="task-meta">
+                Создана: {{ task.created_at|date:"d.m.Y H:i" }}
+                {% if task.completed_at %}
+                    · Выполнена: {{ task.completed_at|date:"d.m.Y H:i" }}
+                {% endif %}
+            </div>
+
+            <div class="task-actions">
+                {% if task.completed %}
+                    <a href="{% url 'task_toggle' task.pk %}" class="btn btn-warning">↩ Вернуть</a>
+                {% else %}
+                    <a href="{% url 'task_toggle' task.pk %}" class="btn btn-success">✓ Выполнить</a>
+                {% endif %}
+                <a href="{% url 'task_update' task.pk %}" class="btn btn-light">Редактировать</a>
+                <a href="{% url 'task_delete' task.pk %}" class="btn btn-danger">Удалить</a>
+            </div>
+        </div>
+    {% empty %}
+        <div class="empty">Задач пока нет 🎉</div>
+    {% endfor %}
+{% endblock %}

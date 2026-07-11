@@ -1,0 +1,15 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Удаление задачи{% endblock %}
+
+{% block content %}
+    <h1>Удалить задачу?</h1>
+    <div class="card">
+        <p style="margin-bottom: 16px;">Задача «<strong>{{ task.title }}</strong>» будет удалена безвозвратно.</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Да, удалить</button>
+            <a href="{% url 'task_list' %}" class="btn btn-light">Отмена</a>
+        </form>
+    </div>
+{% endblock %}
