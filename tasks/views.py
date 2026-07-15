@@ -7,12 +7,10 @@ from .forms import TaskForm
 def task_list(request):
     tasks = Task.objects.all().order_by('-created_at')
 
-    # поиск по названию
     query = request.GET.get('q', '')
     if query:
         tasks = tasks.filter(title__icontains=query)
 
-    # фильтр по статусу
     status = request.GET.get('status', 'all')
     if status == 'completed':
         tasks = tasks.filter(completed=True)
@@ -43,7 +41,7 @@ def task_update(request, pk):
         form = TaskForm(request.POST, instance=task)
         if form.is_valid():
             task = form.save(commit=False)
-            # если статус поменяли через форму — обновляем completed_at
+            
             if task.completed and task.completed_at is None:
                 task.completed_at = timezone.now()
             elif not task.completed:
